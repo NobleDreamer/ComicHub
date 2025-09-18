@@ -12,13 +12,13 @@ import backend from "~backend/client";
 const genres = ["Action", "Adventure", "Comedy", "Drama", "Fantasy", "Horror", "Romance", "Sci-Fi", "Slice of Life"];
 
 export function HomePage() {
-  const [selectedGenre, setSelectedGenre] = useState<string>("");
+  const [selectedGenre, setSelectedGenre] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
 
   const { data: seriesData, isLoading } = useQuery({
     queryKey: ["series", selectedGenre],
     queryFn: () => backend.series.list({ 
-      genre: selectedGenre || undefined,
+      genre: selectedGenre === "all" ? undefined : selectedGenre,
       limit: 20 
     }),
   });
@@ -49,7 +49,7 @@ export function HomePage() {
             <SelectValue placeholder="All Genres" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Genres</SelectItem>
+            <SelectItem value="all">All Genres</SelectItem>
             {genres.map((genre) => (
               <SelectItem key={genre} value={genre}>
                 {genre}
@@ -57,8 +57,8 @@ export function HomePage() {
             ))}
           </SelectContent>
         </Select>
-        {selectedGenre && (
-          <Button variant="outline" onClick={() => setSelectedGenre("")}>
+        {selectedGenre !== "all" && (
+          <Button variant="outline" onClick={() => setSelectedGenre("all")}>
             Clear Filter
           </Button>
         )}
